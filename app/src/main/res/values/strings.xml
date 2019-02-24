@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">DBAdmin</string>
+    <string name="ToAddAct">Добавить новый код</string>
+    <string name="FocusCamera">Наведите камеру на штрихкод</string>
+</resources>
