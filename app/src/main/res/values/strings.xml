@@ -2,4 +2,7 @@
     <string name="app_name">DBAdmin</string>
     <string name="ToAddAct">Добавить новый код</string>
     <string name="FocusCamera">Наведите камеру на штрихкод</string>
+    <string name="Edit">Изменить базу</string>
+    <string name="Download">Скачать базу</string>
+    <string name="UploadDB">Загрузить базу</string>
 </resources>

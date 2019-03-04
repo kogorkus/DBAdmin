@@ -12,15 +12,15 @@ public class Connector {
 
         try {
             URL url = new URL(urlAddress);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-            con.setRequestMethod("POST");
-            con.setConnectTimeout(20000);
-            con.setReadTimeout(20000);
-            con.setDoInput(true);
-            con.setDoOutput(true);
+            connection.setRequestMethod("POST");
+            connection.setConnectTimeout(20000);
+            connection.setReadTimeout(20000);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
 
-            return con;
+            return connection;
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
