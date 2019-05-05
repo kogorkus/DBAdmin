@@ -9,9 +9,12 @@ import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.view.Menu;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -37,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private String jsonData;
     private String GETurlAddress = "http://phasmid-helmet.000webhostapp.com/package/android.php";
     private String POSTurlAddress = "http://phasmid-helmet.000webhostapp.com/package/post2.php";
+    private String DELETEurlAddress = "http://phasmid-helmet.000webhostapp.com/package/delete.php";
     private DBManager dbManager;
     private SimpleCursorAdapter myAdapter;
 
@@ -50,8 +54,19 @@ public class MainActivity extends AppCompatActivity {
         dbManager = DBManager.getInstance(this);
         Cursor cursor = dbManager.getAllResults();
 
-        myAdapter = new SimpleCursorAdapter(this, R.layout.listitem, cursor, new String[]{"NAME", "LENGTH"}, new int[]{R.id.NameTV, R.id.LengthTV}, 0);
+        myAdapter = new SimpleCursorAdapter(this, R.layout.listitem, cursor, new String[]{"_id", "NAME", "LENGTH"}, new int[]{R.id.IdTV, R.id.NameTV, R.id.LengthTV}, 0);
         listView.setAdapter(myAdapter);
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                TextView tv = findViewById(R.id.IdTV);
+                dbManager.deleteBarcode(tv.getText().toString());
+                Cursor cursor = dbManager.getAllResults();
+                myAdapter.changeCursor(cursor);
+                myAdapter.notifyDataSetChanged();
+                return false;
+            }
+        });
     }
 
     @Override
@@ -72,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.UploadLocalDB) {
             Cursor cursor = dbManager.getAllResults();
             String CODE, NAME, LENGTH;
+            new Deleter().execute();
             while (cursor.moveToNext()) {
                 CODE = cursor.getString(cursor.getColumnIndex("CODE"));
                 NAME = cursor.getString(cursor.getColumnIndex("NAME"));
@@ -120,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
 
                 while ((line = br.readLine()) != null) {
                     jsonDataSB.append(line);
-
                 }
                 br.close();
                 is.close();
@@ -158,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
                 Cursor cursor = dbManager.getAllResults();
                 myAdapter.changeCursor(cursor);
                 myAdapter.notifyDataSetChanged();
+                Toast.makeText(MainActivity.this,"Успешно загружено", Toast.LENGTH_SHORT);
             }
         }
     }
@@ -190,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
 
+            /*
 
             if (response == null) {
                 Toast.makeText(MainActivity.this, "Unsuccessful,Null returned", Toast.LENGTH_SHORT).show();
@@ -203,6 +220,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
+            */
         }
 
         private String send() {
@@ -245,6 +263,22 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
 
+    }
+
+    class Deleter extends  AsyncTask<Void, Void, Void>
+    {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            HttpURLConnection con = Connector.connect(DELETEurlAddress);
+            try {
+                InputStream is = new BufferedInputStream(con.getInputStream());
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
 }

@@ -47,4 +47,9 @@ public class DBManager {
     {
         db.delete("BARCODES", null, null);
     }
+
+    void deleteBarcode(String CODE)
+    {
+        db.delete("BARCODES", "_id=?", new String[]{CODE});
+    }
 }
